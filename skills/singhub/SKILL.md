@@ -72,7 +72,28 @@ Format the response as a Telegram message with emoji icons, then attach an inlin
 点击下方按钮查看完整结果 👇
 ```
 
-**Button:** Render `button.label` as a Telegram inline keyboard button. Set `button.url` as the button URL so it opens the SingHub mini app inside Telegram.
+**Button:** Attach a Telegram inline keyboard button using `web_app` type so the Mini App opens inside Telegram:
+
+```json
+{
+  "action": "send",
+  "channel": "telegram",
+  "message": "<the formatted message above>",
+  "buttons": [
+    [{ "text": "<button.label>", "web_app": { "url": "<button.url>" } }]
+  ]
+}
+```
+
+If `web_app` is not supported, fall back to a `url` type button:
+
+```json
+{
+  "buttons": [
+    [{ "text": "<button.label>", "url": "<button.url>" }]
+  ]
+}
+```
 
 **Rules:**
 
