@@ -48,17 +48,21 @@ If the response includes `needs_clarification: true`:
 
 ## Step 3: Render Result
 
-Format the response as a Telegram message with emoji icons, then attach an inline keyboard button.
+Format the response as a Telegram message with emoji icons and a clickable link button.
 
 **Message format:**
 
 ```
 🔍 {message}
 
-🏷️ {display_filters as key: value lines, each on its own line}
+📍 地区: {display_filters.地区}
+📂 分类: {display_filters.分类}
+👶 年龄: {display_filters.年龄}
 
-点击下方按钮查看完整结果 👇
+👉 [{button.label}]({button.url})
 ```
+
+Only include filter lines that have values other than "不限".
 
 **Example** (for query "儿童游泳淡滨尼"):
 
@@ -69,35 +73,14 @@ Format the response as a Telegram message with emoji icons, then attach an inlin
 📂 分类: 游泳
 👶 年龄: 儿童
 
-点击下方按钮查看完整结果 👇
+👉 [打开筛选结果](https://tg.singhub.cc/?districts=tampines&categories=swimming&search=)
 ```
 
-**Button:** Attach a Telegram inline keyboard button using `web_app` type so the Mini App opens inside Telegram:
-
-```json
-{
-  "action": "send",
-  "channel": "telegram",
-  "message": "<the formatted message above>",
-  "buttons": [
-    [{ "text": "<button.label>", "web_app": { "url": "<button.url>" } }]
-  ]
-}
-```
-
-If `web_app` is not supported, fall back to a `url` type button:
-
-```json
-{
-  "buttons": [
-    [{ "text": "<button.label>", "url": "<button.url>" }]
-  ]
-}
-```
+The `[text](url)` Markdown link renders as a clickable link in Telegram.
 
 **Rules:**
 
-- Do NOT display `button.url` as raw text. It must be an inline keyboard button.
+- Use Markdown link format `[label](url)` for the button. Do NOT display the raw URL separately.
 - Do NOT display anything from `meta`. It is internal/debug only.
 - Match the user's language for surrounding text (Chinese example above; use English equivalents for English users).
 - Use these emoji mappings for `display_filters` keys: 地区 → 📍, 分类 → 📂, 年龄 → 👶.
