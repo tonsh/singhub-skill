@@ -48,17 +48,38 @@ If the response includes `needs_clarification: true`:
 
 ## Step 3: Render Result
 
-Show these fields to the user:
+Format the response as a Telegram message with emoji icons, then attach an inline keyboard button.
 
-1. **`message`** — display as summary text.
-2. **`display_filters`** — show as a brief list of applied filters.
-3. **`button`** — render a clickable button using `button.label` as text and `button.url` as the link target.
+**Message format:**
 
-Rules:
+```
+🔍 {message}
 
-- Do NOT display `button.url` as raw text. Use it only as the button link.
+🏷️ {display_filters as key: value lines, each on its own line}
+
+点击下方按钮查看完整结果 👇
+```
+
+**Example** (for query "儿童游泳淡滨尼"):
+
+```
+🔍 我先帮你整理了筛选条件，点开后可以继续调整。
+
+📍 地区: 淡滨尼
+📂 分类: 游泳
+👶 年龄: 儿童
+
+点击下方按钮查看完整结果 👇
+```
+
+**Button:** Render `button.label` as a Telegram inline keyboard button. Set `button.url` as the button URL so it opens the SingHub mini app inside Telegram.
+
+**Rules:**
+
+- Do NOT display `button.url` as raw text. It must be an inline keyboard button.
 - Do NOT display anything from `meta`. It is internal/debug only.
-- Match the user's language when adding surrounding text.
+- Match the user's language for surrounding text (Chinese example above; use English equivalents for English users).
+- Use these emoji mappings for `display_filters` keys: 地区 → 📍, 分类 → 📂, 年龄 → 👶.
 
 ## Step 4: Fallback
 
