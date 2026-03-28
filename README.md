@@ -5,7 +5,7 @@ Search Singapore community activities and courses (OnePA + ActiveSG) from OpenCl
 ## 安装
 
 ```bash
-openclaw install github:anthropic-sg/singhub-openclaw-skill
+openclaw install github:tonsh/singhub-skill
 ```
 
 ## 功能
