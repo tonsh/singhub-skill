@@ -48,39 +48,61 @@ If the response includes `needs_clarification: true`:
 
 ## Step 3: Render Result
 
-Format the response as a Telegram message with emoji icons and a clickable link button.
+Send the result as a Telegram message with an inline keyboard button that opens the SingHub Mini App inside Telegram.
 
-**Message format:**
+Use the Telegram Bot API `sendMessage` method with `reply_markup` to attach the button:
 
+```bash
+curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "chat_id": "<current chat id>",
+    "text": "<formatted message below>",
+    "parse_mode": "HTML",
+    "reply_markup": {
+      "inline_keyboard": [[
+        { "text": "<button.label>", "web_app": { "url": "<button.url>" } }
+      ]]
+    }
+  }'
 ```
+
+**Message text format** (HTML):
+
+```html
 🔍 {message}
 
 📍 地区: {display_filters.地区}
 📂 分类: {display_filters.分类}
 👶 年龄: {display_filters.年龄}
-
-👉 [{button.label}]({button.url})
 ```
 
 Only include filter lines that have values other than "不限".
 
 **Example** (for query "儿童游泳淡滨尼"):
 
+Message text:
 ```
 🔍 我先帮你整理了筛选条件，点开后可以继续调整。
 
 📍 地区: 淡滨尼
 📂 分类: 游泳
 👶 年龄: 儿童
-
-👉 [打开筛选结果](https://tg.singhub.cc/?districts=tampines&categories=swimming&search=)
 ```
 
-The `[text](url)` Markdown link renders as a clickable link in Telegram.
+Button: `{ "text": "打开筛选结果", "web_app": { "url": "https://tg.singhub.cc/?districts=tampines&categories=swimming&search=" } }`
+
+The `web_app` button type opens the URL as a Telegram Mini App inside the chat, not in an external browser.
+
+If `web_app` is not available, fall back to a `url` type button (opens in Telegram's built-in browser):
+
+```json
+{ "text": "<button.label>", "url": "<button.url>" }
+```
 
 **Rules:**
 
-- Use Markdown link format `[label](url)` for the button. Do NOT display the raw URL separately.
+- MUST use inline keyboard button. Do NOT output `button.url` as text or markdown link.
 - Do NOT display anything from `meta`. It is internal/debug only.
 - Match the user's language for surrounding text (Chinese example above; use English equivalents for English users).
 - Use these emoji mappings for `display_filters` keys: 地区 → 📍, 分类 → 📂, 年龄 → 👶.
